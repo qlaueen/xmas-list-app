@@ -1,0 +1,114 @@
+users
+- id INT PRIMARY KEY
+- email STRING UNIQUE
+- password STRING HASHED
+- is_active BOOLEAN
+- created_at TIMESTAMP
+- updated_at TIMESTAMP
+
+groups
+- id INT PRIMARY KEY
+- name STRING 
+- link STRING
+- is_active BOOLEAN
+- created_at TIMESTAMP
+- updated_at TIMESTAMP
+
+wishlists
+- id INT PRIMARY KEY
+- name STRING
+- user_id INT (FK -> users.id)
+- link STRING
+- is_active BOOLEAN
+- created_at TIMESTAMP
+- updated_at TIMESTAMP
+
+groups_wishlists
+- id INT PRIMARY KEY
+- group_id INT (FK -> groups.id)
+- wishlist_id INT (FK -> wishlists.id)
+- created_at TIMESTAMP
+- UNIQUE(group_id, wishlist_id)
+
+items
+- id INT PRIMARY KEY
+- wishlist_id INT (FK -> wishlists.id)
+- name STRING
+- price FLOAT
+- link STRING
+- image STRING
+- description STRING
+- is_claimed BOOLEAN DEFAULT FALSE
+- claimed_by INT (FK -> users.id, NULL if not claimed) 
+- claimed_at TIMESTAMP
+- is_purchased BOOLEAN DEFAULT FALSE
+- purchased_by INT (FK -> users.id, NULL if not purchased)
+- purchased_at TIMESTAMP
+- created_at TIMESTAMP
+- updated_at TIMESTAMP
+
+// resourceful actions
+
+// index: where you show all the instances
+
+Route::get('/ideas', function () {
+  $ideas = Idea::all();
+
+  return view('ideas.index', [
+    'ideas' => $ideas,
+  ]);
+});
+
+after adding route to controller, this is how it's going to look like:
+Route::get('/ideas', [IdeaController::class, 'index']);
+
+// create: shows a form to create a new instance 
+
+Route::get('/ideas/create', function () {
+  return view('ideas.create');
+})
+
+// show: showing an individual instance
+
+Route::get('/ideas/{idea}', function (Idea $idea) {
+  return view('ideas.show', [
+    'idea' => $idea,
+  ]);
+});
+
+// edit: where you can edit an idea (note: this is the route to the page that edits it, not the route to make the request to edit it)
+
+Route::get('/ideas/{idea}/edit', function (Idea $idea) {
+  return view('ideas.edit', [
+    'idea' => $idea,
+  ]);
+});
+
+// update: actual route that edits a form
+
+Route::patch('/ideas/{idea}', function (Idea $idea) {
+  $idea->update([
+    'description' => request('description'),
+  ]);
+
+  return redirect('/ideas/{$idea->id}');
+});
+
+// store: saves the request data into the database
+
+Route::post('/ideas/', function() {
+  Idea::create([
+    'description' => request('description'),
+    'state' => 'pending'
+  ]);
+
+  return redirect('/ideas');
+});
+
+// destroy: deletes an instance
+
+Route::delete('/ideas/{idea}', function (Idea $idea) {
+  $idea->delete();
+
+  Return redirect('/ideas');
+})
