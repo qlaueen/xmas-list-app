@@ -2,6 +2,7 @@
   @if ($wishlists->count())
     <div class="card card-border bg-base-100 w-96">
       <h2>Your wishlists</h2>
+      <a href="wishlists/create">Create a new wishlist</a>
       @foreach($wishlists as $wishlist)
         <div class="card-body">
           <h2 class="card-title">{{ $wishlist->name }}</h2>

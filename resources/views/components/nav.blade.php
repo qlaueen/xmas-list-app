@@ -6,6 +6,7 @@
     <ul class="menu menu-horizontal px-1">
       <li><a href="/">Home</a></li>
         @auth
+          <li><a href="/wishlists">My wishlists</a></li>
           <li>
             <form method="POST" action="/logout">
               @csrf

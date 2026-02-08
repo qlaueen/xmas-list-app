@@ -24,7 +24,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('link')->unique();
+            $table->string('link')->unique()->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
